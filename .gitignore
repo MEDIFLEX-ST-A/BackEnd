@@ -7,7 +7,8 @@ build/
 
 ### CUSTOM ###
 application-prod.yml
-
+application-dev.yml
+*.yml
 ### STS ###
 .apt_generated
 .classpath
