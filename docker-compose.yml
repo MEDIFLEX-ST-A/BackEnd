@@ -1,7 +1,7 @@
 version: '3'
 services:
   spring-boot:
-    container_name: nanal-server
+    container_name: medi-server
     build:
       context: .
       dockerfile: Dockerfile-dev
