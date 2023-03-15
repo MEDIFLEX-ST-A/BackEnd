@@ -25,13 +25,12 @@ public class Video extends BaseTime {
     @Column(length = 20, nullable = false)
     private String category;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 50, nullable = false)
     private String title;
 
     @Column(length = 20, nullable = false)
     private String cast;
 
-    @Column(name = "video_view")
     private Long view;
 
     private LocalDateTime uploadDate;
