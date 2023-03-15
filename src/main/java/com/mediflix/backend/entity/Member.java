@@ -13,8 +13,8 @@ import javax.persistence.Table;
 @Getter
 @Setter
 // 이런 Table 이름이 있다면 지우고, 새로 생성하겠다!
-@Table(name = "member_table")
-public class MemberEntity {
+@Table(name = "member")
+public class Member {
     //요런 형식을 갖는 컬럼들이 생성되는 것이다.
 
     //회원 번호
@@ -55,11 +55,11 @@ public class MemberEntity {
     private Long watch_time;
 
     // 이후 DB에 값을 저장하는 메소드 실행. (DTO -> entity)
-    public static MemberEntity toMemberEntity(MemberDTO memberDTO) {
-        MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setUserId(memberDTO.getUserId()); // 매개변수는 DTO에 담긴 걸 entity에 넘기는 작업이므로 get!
-        memberEntity.setUserPw(memberDTO.getUserPw());
-        memberEntity.setMemberName(memberDTO.getMemberName());
-        return memberEntity;
+    public static Member toMemberEntity(MemberDTO memberDTO) {
+        Member member = new Member();
+        member.setUserId(memberDTO.getUserId()); // 매개변수는 DTO에 담긴 걸 entity에 넘기는 작업이므로 get!
+        member.setUserPw(memberDTO.getUserPw());
+        member.setMemberName(memberDTO.getMemberName());
+        return member;
     }
 }
