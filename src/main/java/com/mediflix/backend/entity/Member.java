@@ -1,5 +1,6 @@
 package com.mediflix.backend.entity;
 
+import com.mediflix.backend.config.BaseTime;
 import com.mediflix.backend.dto.MemberDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 @Setter
 // 이런 Table 이름이 있다면 지우고, 새로 생성하겠다!
 @Table(name = "member")
-public class Member {
+public class Member extends BaseTime {
     //요런 형식을 갖는 컬럼들이 생성되는 것이다.
 
     //회원 번호
