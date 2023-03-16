@@ -1,9 +1,7 @@
 package com.mediflix.backend.entity;
 
 import com.mediflix.backend.config.BaseTime;
-import com.mediflix.backend.dto.MemberDTO;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 // 이런 Table 이름이 있다면 지우고, 새로 생성하겠다!
 @Table(name = "member")
 public class Member extends BaseTime {
@@ -41,7 +40,11 @@ public class Member extends BaseTime {
 
     //역할
     @Column(nullable = false)
-    private String role;
+    private int roleNum;
+
+    //역할 이름(대리, 주임 ,,,)
+    @Column
+    private String role_name;
 
     //전공과
     @Column
@@ -54,13 +57,4 @@ public class Member extends BaseTime {
     //시청 시간
     @Column
     private Long watch_time;
-
-    // 이후 DB에 값을 저장하는 메소드 실행. (DTO -> entity)
-    public static Member toMemberEntity(MemberDTO memberDTO) {
-        Member member = new Member();
-        member.setUserId(memberDTO.getUserId()); // 매개변수는 DTO에 담긴 걸 entity에 넘기는 작업이므로 get!
-        member.setUserPw(memberDTO.getUserPw());
-        member.setMemberName(memberDTO.getMemberName());
-        return member;
-    }
 }
