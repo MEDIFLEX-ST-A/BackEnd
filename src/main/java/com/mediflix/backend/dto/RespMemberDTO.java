@@ -16,6 +16,7 @@ public class RespMemberDTO {
 
     private String nickname;
 
+    private int role_num;
     private String role_name;
 
     //해당 정보를 Controller에 제공.
@@ -28,6 +29,7 @@ public class RespMemberDTO {
         respMemberDTO.memberName = member.getMemberName();
         respMemberDTO.nickname = member.getNickname();
         respMemberDTO.role_name = member.getRole_name();
+        respMemberDTO.role_num = member.getRoleNum();
         return respMemberDTO;
     }
 }

@@ -27,6 +27,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.31'
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
