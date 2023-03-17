@@ -11,7 +11,8 @@ import javax.persistence.Table;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Builder
 // 이런 Table 이름이 있다면 지우고, 새로 생성하겠다!
 @Table(name = "member")
 public class Member extends BaseTime {
