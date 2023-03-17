@@ -47,12 +47,11 @@ public class MemberController {
     }
 
     //회원 목록 출력
-    @GetMapping("/member/")
-    public String findAll(Model model) {
-        List<RespMemberDTO> respMemberDTOList = memberService.findAll();
+    @GetMapping("/admin/list")
+    public List adminList(Model model) {
+        List<RespMemberDTO> respMemberDTOList = memberService.findAdminList();
         // 어떠한 html로 가져갈 데이터가 있다면 model을 사용한다.
-        model.addAttribute("memberList", respMemberDTOList);
-        return "list";
+        return respMemberDTOList;
     }
 
     //개인의 회원정보 상세조회

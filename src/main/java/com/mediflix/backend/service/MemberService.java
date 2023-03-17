@@ -47,8 +47,9 @@ public class MemberService {
     }
 
     // 회원목록 조회 로직
-    public List<RespMemberDTO> findAll() {
-        List<Member> memberList = memberRepository.findAll();
+    public List<RespMemberDTO> findAdminList() {
+        //List<Member> memberList = memberRepository.findAll();
+        List<Member> memberList = memberRepository.getAdminList();
         List<RespMemberDTO> memberDTOList = new ArrayList<>();
         for (Member member : memberList) {
             //DTO객체를 담기 위한 List
