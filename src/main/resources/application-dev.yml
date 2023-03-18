@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://host.docker.internal:3306/medi?serverTimezone=Asia/Seoul
+    username: medi
+    password: Medi1234!@
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+    database: mysql
+      # Initial Data config
+    defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:/sql/*
+      mode: always
+      separator: ^;
