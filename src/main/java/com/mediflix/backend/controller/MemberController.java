@@ -2,6 +2,7 @@ package com.mediflix.backend.controller;
 
 import com.mediflix.backend.dto.ReqMemberDTO;
 import com.mediflix.backend.dto.RespMemberDTO;
+import com.mediflix.backend.repository.MemberList;
 import com.mediflix.backend.service.MemberService;
 import com.mediflix.backend.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +50,8 @@ public class MemberController {
     //회원 목록 출력
     @GetMapping("/admin/list")
     public List adminList(Model model) {
-        List<RespMemberDTO> respMemberDTOList = memberService.findAdminList();
-        // 어떠한 html로 가져갈 데이터가 있다면 model을 사용한다.
-        return respMemberDTOList;
+        List<MemberList> memberLists = memberService.findAdminList();
+        return memberLists;
     }
 
     //개인의 회원정보 상세조회

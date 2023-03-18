@@ -3,6 +3,7 @@ package com.mediflix.backend.service;
 import com.mediflix.backend.dto.ReqMemberDTO;
 import com.mediflix.backend.dto.RespMemberDTO;
 import com.mediflix.backend.entity.Member;
+import com.mediflix.backend.repository.MemberList;
 import com.mediflix.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,19 +48,9 @@ public class MemberService {
     }
 
     // 회원목록 조회 로직
-    public List<RespMemberDTO> findAdminList() {
-        //List<Member> memberList = memberRepository.findAll();
-        List<Member> memberList = memberRepository.getAdminList();
-        List<RespMemberDTO> memberDTOList = new ArrayList<>();
-        for (Member member : memberList) {
-            //DTO객체를 담기 위한 List
-            memberDTOList.add(RespMemberDTO.toMemberDTO(member));
-
-            // 위의 문장이랑 같은 의미.
-//            MemberDTO memberDTO = MemberDTO.toMemberDTO(memberEntity);
-//            memberDTOList.add(memberDTO);
-        }
-        return memberDTOList;
+    public List<MemberList> findAdminList() {
+        List<MemberList> memberList = memberRepository.getAdminList(1);
+        return memberList;
     }
 
     //개인 회원 상세조회 로직

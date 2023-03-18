@@ -4,6 +4,7 @@ import com.mediflix.backend.entity.Member;
 import com.mediflix.backend.entity.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // Optional 은 null 방지를 해줌.
     Optional<Member> findByUserId(String userId);
 
-    @Query(value = "SELECT m FROM Member m WHERE m.roleNum=1")
-    List<Member> getAdminList();
+    @Query(value = "SELECT m.memberName as member_name, m.role_name as role_name FROM Member m WHERE m.roleNum=1")
+    List<MemberList> getAdminList(@Param("role_num") int role_num);
 
 }
