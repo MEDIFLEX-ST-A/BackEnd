@@ -13,8 +13,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     @Query(value = "UPDATE Video v SET v.view = v.view + 1 WHERE v.videoId = :id")
     void updateView(Long id);
     @Query(value = "SELECT v FROM Video v WHERE v.updatedAt >= :start AND v.updatedAt < :end ORDER BY v.view DESC")
-    List<Video> getTop(LocalDateTime start, LocalDateTime end);
+    List<Video> getVideo(LocalDateTime start, LocalDateTime end);
 
     @Query(value = "SELECT v FROM Video v WHERE v.updatedAt < :end ORDER BY v.view DESC")
-    List<Video> getTopAll(LocalDateTime end);
+    List<Video> getVideoAll(LocalDateTime end);
 }

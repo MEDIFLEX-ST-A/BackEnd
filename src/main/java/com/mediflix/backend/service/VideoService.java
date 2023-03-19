@@ -25,10 +25,9 @@ public class VideoService {
 
     public RespGetViewDto getDayView() {
         LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);;
+        LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
 
-        List<Video> videos = videoRepository.getTop(start, end);
-        System.out.println(videos);
+        List<Video> videos = videoRepository.getVideo(start, end);
 
         RespGetViewDto respGetViewDto = RespGetViewDto.makeRespGetViewDto(videos);
         return respGetViewDto;
@@ -39,8 +38,7 @@ public class VideoService {
         LocalDateTime start = LocalDate.now().atStartOfDay().minusDays(6);
         LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);;
 
-        List<Video> videos = videoRepository.getTop(start, end);
-        System.out.println(videos);
+        List<Video> videos = videoRepository.getVideo(start, end);
 
         RespGetViewDto respGetViewDto = RespGetViewDto.makeRespGetViewDto(videos);
         return respGetViewDto;
@@ -50,8 +48,7 @@ public class VideoService {
         LocalDateTime start = LocalDate.now().atStartOfDay().withDayOfMonth(1);
         LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);;
 
-        List<Video> videos = videoRepository.getTop(start, end);
-        System.out.println(videos);
+        List<Video> videos = videoRepository.getVideo(start, end);
 
         RespGetViewDto respGetViewDto = RespGetViewDto.makeRespGetViewDto(videos);
         return respGetViewDto;
@@ -60,8 +57,7 @@ public class VideoService {
     public RespGetViewDto getAllView() {
         LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);;
 
-        List<Video> videos = videoRepository.getTopAll(end);
-        System.out.println(videos);
+        List<Video> videos = videoRepository.getVideoAll(end);
 
         RespGetViewDto respGetViewDto = RespGetViewDto.makeRespGetViewDto(videos);
         return respGetViewDto;
