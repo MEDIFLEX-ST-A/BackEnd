@@ -1,8 +1,11 @@
 package com.mediflix.backend.controller;
 
+import com.mediflix.backend.dto.ReqGetDataDto;
 import com.mediflix.backend.dto.ReqMemberDTO;
+import com.mediflix.backend.dto.RespGetDataDto;
 import com.mediflix.backend.dto.RespMemberDTO;
 import com.mediflix.backend.repository.MemberList;
+import com.mediflix.backend.response.CommonResponse;
 import com.mediflix.backend.service.MemberService;
 import com.mediflix.backend.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,15 @@ public class MemberController {
         }
         return loginResult;
     }
+
+    @GetMapping("/logs")
+    public CommonResponse<?> getLog(ReqGetDataDto reqGetDataDto) {
+        RespGetDataDto respGetDataDto = memberService.getData(reqGetDataDto);
+
+        return new CommonResponse<>(respGetDataDto);
+    }
+
+
 
     //로그아웃
     @GetMapping("/admin/logout")
