@@ -1,18 +1,12 @@
 package com.mediflix.backend.service;
 
-import com.mediflix.backend.dto.ReqGetDataDto;
-import com.mediflix.backend.dto.ReqMemberDTO;
-import com.mediflix.backend.dto.RespGetDataDto;
-import com.mediflix.backend.dto.RespMemberDTO;
+import com.mediflix.backend.dto.*;
 import com.mediflix.backend.entity.Member;
 import com.mediflix.backend.entity.MemberLog;
+import com.mediflix.backend.entity.Partner;
 import com.mediflix.backend.entity.Video;
-import com.mediflix.backend.repository.MemberList;
-import com.mediflix.backend.repository.MemberLogRepository;
-import com.mediflix.backend.repository.MemberRepository;
-import com.mediflix.backend.repository.VideoRepository;
+import com.mediflix.backend.repository.*;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,6 +24,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberLogRepository memberLogRepository;
     private final VideoRepository videoRepository;
+    private final PartnerRepository partnerRepository;
 
     // 로그인 처리
     public RespMemberDTO login(ReqMemberDTO reqMemberDTO) {
@@ -65,8 +60,12 @@ public class MemberService {
         LocalDateTime start = day.atStartOfDay();
         LocalDateTime end = day.atTime(LocalTime.MAX);
         LocalDateTime prevend = day.atTime(LocalTime.MAX).minusDays(1);
+        LocalDateTime prevstart = day.atStartOfDay().minusDays(10);
+        List<Video> videos = videoRepository.getVideo(start, end);
 
-        RespGetDataDto respGetDataDto = getLogs(start, end, prevend);
+        List<RespGetLogDto> logs = getPreviousLogs(prevstart);
+
+        RespGetDataDto respGetDataDto = getLogs(start, end, prevend, videos, logs);
 
         return respGetDataDto;
     }
@@ -98,7 +97,7 @@ public class MemberService {
 
 
     //편의 메서드
-    private RespGetDataDto getLogs(LocalDateTime start, LocalDateTime end, LocalDateTime prevend) {
+    private RespGetDataDto getLogs(LocalDateTime start, LocalDateTime end, LocalDateTime prevend, List<Video> video, List<RespGetLogDto> logs) {
         String service1 = "login";
         String service2 = "signin";
         String service3 = "visit";
@@ -108,8 +107,10 @@ public class MemberService {
         List<MemberLog> sigininlog = memberLogRepository.getTodayLogs(start, end, service2);
         List<MemberLog> signinlogs = memberLogRepository.getLogs(end, service2);
         List<MemberLog> watchlog = memberLogRepository.getTodayLogs(start, end, service4);
+        List<MemberLog> watchlogs = memberLogRepository.getLogs(end, service4);
         List<MemberLog> loginlog = memberLogRepository.getTodayLogs(start, end, service1);
         List<Video> videos = videoRepository.getVideoAll(end);
+        List<Partner> partners = partnerRepository.findAll();
 
         List<MemberLog> prevsigninlogs = memberLogRepository.getLogs(prevend, service2);
         List<Video> prevVideos = videoRepository.getVideoAll(prevend);
@@ -121,9 +122,25 @@ public class MemberService {
         int todayLeave = visitlog.size() - loginlog.size();
         int signinIncrease = signinlogs.size() - prevsigninlogs.size();
         int videoIncrease = videos.size() - prevVideos.size();
+        int watchMean = watchlogs.size() / 10;
+        int partner = partners.size();
 
-        RespGetDataDto respGetLogDto = RespGetDataDto.makerespGetLogDto(todayVisit, todaySignin, visitMean, todayWatch, todayLeave, signinlogs.size(), signinIncrease, videos.size(), videoIncrease);
+        RespGetDataDto respGetLogDto = RespGetDataDto.makerespGetLogDto(todayVisit, todaySignin, visitMean, todayWatch, todayLeave, signinlogs.size(), signinIncrease, videos.size(), videoIncrease, video, watchMean, partner, logs);
 
         return respGetLogDto;
+    }
+
+    private List<RespGetLogDto> getPreviousLogs(LocalDateTime start) {
+        List<RespGetLogDto> logs = new ArrayList<>();
+        for(int i = 0; i < 10; i++) {
+            LocalDateTime end = start.toLocalDate().atTime(LocalTime.MAX);
+            List<MemberLog> visitlog = memberLogRepository.getTodayLogs(start, end, "visit");
+            List<MemberLog> loginlog = memberLogRepository.getTodayLogs(start, end, "login");
+            List<MemberLog> watchlog = memberLogRepository.getTodayLogs(start, end, "watch");
+            RespGetLogDto respGetLogDto = RespGetLogDto.makeRespGetLogDto(start.toString(), visitlog.size(), loginlog.size(), watchlog.size());
+            logs.add(respGetLogDto);
+            start = start.toLocalDate().atStartOfDay().plusDays(1);
+        }
+        return logs;
     }
 }
