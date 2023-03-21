@@ -9,6 +9,7 @@ import com.mediflix.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -159,6 +160,11 @@ public class MemberService {
         List<MemberLog> prevsigninlogs = memberLogRepository.getLogs(prevend, service2);
         List<Video> prevVideos = videoRepository.getVideoAll(prevend);
 
+        //Son
+        List<MemberList> memberList = memberRepository.getAdminList(1);
+        List<MajorList> majorLists = memberRepository.getMajorList(0);
+        List<Video> videoList = videoRepository.findAll();
+
         int todayVisit = visitlog.size();
         int todaySignin = sigininlog.size();
         int visitMean = visitlogs.size() / 10;
@@ -169,7 +175,66 @@ public class MemberService {
         int watchMean = watchlogs.size() / 10;
         int partner = partners.size();
 
-        RespGetDataDto respGetLogDto = RespGetDataDto.makerespGetLogDto(todayVisit, todaySignin, visitMean, todayWatch, todayLeave, signinlogs.size(), signinIncrease, videos.size(), videoIncrease, video, watchMean, partner, logs);
+        //MajorList
+        // 전공과 총 개수
+        Long cnt = Long.valueOf(majorLists.size());
+        Long nerve = memberRepository.getMemberMajor("신경과");
+        Long bone = memberRepository.getMemberMajor("정형외과");
+        Long home = memberRepository.getMemberMajor("가정의학과");
+        Long digest = memberRepository.getMemberMajor("소화기내과");
+        Long inner = memberRepository.getMemberMajor("내분비내과");
+        Long rmtis = memberRepository.getMemberMajor("류마티스내과");
+
+        String nerve_ratio = String.format("%.0f", (double) nerve / (double) cnt * 100) + "%"; // 신경과 비율
+        String bone_ratio = String.format("%.0f", (double) bone / (double) cnt * 100) + "%"; // 정형외과 비율
+        String home_ratio = String.format("%.0f", (double) home / (double) cnt * 100) + "%"; // 가정의학과 비율
+        String digest_ratio = String.format("%.0f", (double) digest / (double) cnt * 100) + "%"; // 소화기내과 비율
+        String inner_ratio = String.format("%.0f", (double) inner / (double) cnt * 100) + "%"; // 내분비내과 비율
+        String rmtis_ratio = String.format("%.0f", (double) rmtis / (double) cnt * 100) + "%"; // 류마티스내과 비율
+
+        List<RespMajorRatioDto> respMajorRatioDtos = new ArrayList<>();
+        respMajorRatioDtos.add(new RespMajorRatioDto("신경과", nerve_ratio, nerve, cnt));
+        respMajorRatioDtos.add(new RespMajorRatioDto("정형외과", bone_ratio, bone, cnt));
+        respMajorRatioDtos.add(new RespMajorRatioDto("가정의학과", home_ratio, home, cnt));
+        respMajorRatioDtos.add(new RespMajorRatioDto("소화기내과", digest_ratio, digest, cnt));
+        respMajorRatioDtos.add(new RespMajorRatioDto("내분비내과", inner_ratio, inner, cnt));
+        respMajorRatioDtos.add(new RespMajorRatioDto("류마티스내과", rmtis_ratio, rmtis, cnt));
+
+        //전공 별 컨텐츠
+        // 모든 콘텐츠 개수
+        Long cnt_content = Long.valueOf(videoList.size());
+        Long content_nerve = memberRepository.getCountMajorContent("신경과");
+        Long content_bone = memberRepository.getCountMajorContent("정형외과");
+        Long content_digest = memberRepository.getCountMajorContent("소화기내과");
+        Long content_inner = memberRepository.getCountMajorContent("내분비내과");
+        Long content_rmtis = memberRepository.getCountMajorContent("류마티스내과");
+        Long content_home = memberRepository.getCountMajorContent("가정의학과");
+        //나머지
+        Long remain = cnt_content - (content_nerve + content_bone + content_digest + content_inner + content_rmtis + content_home);
+
+        String content_nerve_ratio = String.format("%.0f", (double) content_nerve / (double) cnt_content * 100) + "%"; // 신경과 비율
+        String content_bone_ratio = String.format("%.0f", (double) content_bone / (double) cnt_content * 100) + "%"; // 정형외과 비율
+        String content_digest_ratio = String.format("%.0f", (double) content_digest / (double) cnt_content * 100) + "%"; // 소화기내과 비율
+        String content_inner_ratio = String.format("%.0f", (double) content_inner / (double) cnt_content * 100) + "%"; // 내분비내과 비율
+        String content_rmtis_ratio = String.format("%.0f", (double) content_rmtis / (double) cnt_content * 100) + "%"; // 류마티스내과 비율
+        String content_home_ratio = String.format("%.0f", (double) content_home / (double) cnt_content * 100) + "%"; // 가정의학과 비율
+
+        String remain_ratio = String.format("%.0f", (double) remain / (double) cnt_content * 100) + "%"; // 나머지 비율
+
+        List<RespContentsRatioDto> respContentsRatioDtos = new ArrayList<>();
+        respContentsRatioDtos.add(new RespContentsRatioDto("신경과", content_nerve, content_nerve_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("정형외과", content_bone, content_bone_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("소화기내과", content_digest, content_digest_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("내분비내과", content_inner, content_inner_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("류마티스내과", content_rmtis, content_rmtis_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("가정의학과", content_home, content_home_ratio, cnt_content));
+        respContentsRatioDtos.add(new RespContentsRatioDto("그 외", remain, remain_ratio, cnt_content));
+
+        // 로그아웃 처리
+
+        RespGetDataDto respGetLogDto = RespGetDataDto.makerespGetLogDto(todayVisit, todaySignin, visitMean, todayWatch,
+                todayLeave, signinlogs.size(), signinIncrease, videos.size(), videoIncrease, video, watchMean,
+                partner, logs, memberList, respMajorRatioDtos, respContentsRatioDtos);
 
         return respGetLogDto;
     }
