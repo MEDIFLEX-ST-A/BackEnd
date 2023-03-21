@@ -4,8 +4,11 @@ import com.mediflix.backend.dto.ReqGetDataDto;
 import com.mediflix.backend.dto.ReqMemberDTO;
 import com.mediflix.backend.dto.RespGetDataDto;
 import com.mediflix.backend.dto.RespMemberDTO;
+import com.mediflix.backend.repository.CountContents;
+import com.mediflix.backend.repository.MajorList;
 import com.mediflix.backend.repository.MemberList;
 import com.mediflix.backend.response.CommonResponse;
+import com.mediflix.backend.response.ErrorCode;
 import com.mediflix.backend.service.MemberService;
 import com.mediflix.backend.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,33 +18,32 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("unchecked")
 public class MemberController {
     //생성자 주입
     private final MemberService memberService;
 
     //로그인 결과를 받아오는 API
     @PostMapping("/login")
-    public RespMemberDTO login(@RequestBody ReqMemberDTO reqMemberDTO, HttpSession session) {
-        log.info("로그인 시작");
-        RespMemberDTO loginResult = memberService.login(reqMemberDTO);
-        String id = loginResult.getUserId();
+    public CommonResponse<?> login(@RequestBody ReqMemberDTO reqMemberDTO, HttpSession session) {
+        Optional<RespMemberDTO> loginResult = Optional.ofNullable(memberService.login(reqMemberDTO));
 
-        if(loginResult != null) {
-            // 로그인 성공
-            // 세션에다가 Email 정보를 담아준다.
-            log.info("로그인 성공");
+        if (loginResult.isPresent()) // 값이 존재한다면...
+        {
+            //로그인 성공, 세션 생성
+            String id = loginResult.get().getUserId();
             SessionUtil.setLoginMemberId(session, id);
-
+            return new CommonResponse<>(loginResult);
         }
         else {
-            log.info("로그인 실패");
             // 로그인 실패
+            return new CommonResponse<>(ErrorCode.NOT_FOUND, Optional.empty());
         }
-        return loginResult;
     }
 
     @GetMapping("/logs")
@@ -59,19 +61,18 @@ public class MemberController {
         SessionUtil.clear(session);
     }
 
-    //회원 목록 출력
-    @GetMapping("/admin/list")
-    public List adminList(Model model) {
-        List<MemberList> memberLists = memberService.findAdminList();
-        return memberLists;
+    //전공과별 비율
+    @GetMapping("/admin/major_ratio")
+    public List majorList() {
+        List<MajorList> majorLists = memberService.majorList();
+        return majorLists;
     }
 
-    //개인의 회원정보 상세조회
-    @GetMapping("/member/{id}")
-    public String findById(@PathVariable Long id, Model model) {
-        RespMemberDTO memberDTO = memberService.findById(id);
-        model.addAttribute("member", memberDTO);
-        return "detail";
+    // 전공별 콘텐츠 개수
+    @GetMapping("/admin/major_content")
+    public List contentMajor() {
+        List<CountContents> countContents = memberService.CountMajor();
+        return countContents;
     }
 }
 
