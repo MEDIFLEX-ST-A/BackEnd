@@ -49,16 +49,20 @@ public class MemberController {
     @GetMapping("/logs")
     public CommonResponse<?> getLog(ReqGetDataDto reqGetDataDto) {
         RespGetDataDto respGetDataDto = memberService.getData(reqGetDataDto);
-
         return new CommonResponse<>(respGetDataDto);
     }
 
-
-
     //로그아웃
-    @GetMapping("/admin/logout")
+    @GetMapping("/logout")
     public void logout(HttpSession session) {
         SessionUtil.clear(session);
+    }
+
+    //관리자 목록 출력
+    @GetMapping("/admin/list")
+    public List adminList(Model model) {
+        List<MemberList> memberLists = memberService.findAdminList();
+        return memberLists;
     }
 
     //전공과별 비율
